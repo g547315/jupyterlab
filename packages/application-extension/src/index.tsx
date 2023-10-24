@@ -113,6 +113,9 @@ namespace CommandIDs {
   export const tree: string = 'router:tree';
 
   export const switchSidebar = 'sidebar:switch';
+
+  export const sidebarsShortcutNumbers: string =
+    'application:display-sidebars-shortcut-numbers';
 }
 
 /**
@@ -364,6 +367,36 @@ const mainCommands: JupyterFrontEndPlugin<void> = {
         isEnabled: () => !labShell.isEmpty('right')
       });
 
+      commands.addCommand(CommandIDs.sidebarsShortcutNumbers, {
+        label: trans.__('Show Numbers Side bar'),
+        execute: args => {
+          if (args.side != 'left' && args.side != 'right') {
+            throw Error(`Unsupported sidebar: ${args.side}`);
+          }
+
+          const widgets = Array.from(labShell.widgets(args.side));
+          for (let index = 0; index < widgets.length; index++) {
+            let elementId = widgets[index].id;
+            let focusElement = document.querySelector(
+              "[data-id='" + elementId + "']"
+            );
+            if (focusElement) {
+              let getOverlayDiv = focusElement.children.item(2);
+              if (getOverlayDiv) {
+                let shortCutNum = (1 + index).toString();
+                getOverlayDiv.innerHTML = shortCutNum;
+              }
+              if ((getOverlayDiv as HTMLElement).style) {
+                (getOverlayDiv as HTMLElement).style.visibility = 'visible';
+                setTimeout(() => {
+                  (getOverlayDiv as HTMLElement).style.visibility = 'hidden';
+                }, 1000);
+              }
+            }
+          }
+        }
+      });
+
       commands.addCommand(CommandIDs.activateSidebarWidget, {
         label: trans.__('Toggle Sidebar Element'),
         caption: trans.__('By default opens first element of the sidebar'),
@@ -517,7 +550,8 @@ const mainCommands: JupyterFrontEndPlugin<void> = {
         CommandIDs.toggleRightArea,
         CommandIDs.togglePresentationMode,
         CommandIDs.toggleMode,
-        CommandIDs.resetLayout
+        CommandIDs.resetLayout,
+        CommandIDs.sidebarsShortcutNumbers
       ].forEach(command => palette.addItem({ command, category }));
 
       ['right', 'left'].forEach(side => {
