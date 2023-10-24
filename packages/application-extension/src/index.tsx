@@ -104,6 +104,9 @@ namespace CommandIDs {
 
   export const toggleSideTabBar: string = 'application:toggle-side-tabbar';
 
+  export const activateSidebarWidget: string =
+    'application:activate-sidebar-widget';
+
   export const togglePresentationMode: string =
     'application:toggle-presentation-mode';
 
@@ -200,6 +203,39 @@ const mainCommands: JupyterFrontEndPlugin<void> = {
       }
       return widgets.slice(index + 1);
     };
+
+    // Gets and returns the dataId of currently active tab in the specified sidebar (left or right)
+    // or an empty string
+    const activeSidePanelWidget = (side: string): string => {
+      // default active element is luancher (luancher-0)
+      let activeTab;
+      if (side != 'left' && side != 'right') {
+        throw Error(`Unsupported sidebar: ${side}`);
+      }
+      if (side === 'left') {
+        activeTab = document.querySelector('.lm-TabBar-tab.lm-mod-current');
+      } else {
+        const query = document.querySelectorAll(
+          '.lm-TabBar-tab.lm-mod-current'
+        );
+        activeTab = query[query.length - 1];
+      }
+      const activeTabDataId = activeTab?.getAttribute('data-id');
+      if (activeTabDataId) {
+        return activeTabDataId?.toString();
+      } else {
+        return '';
+      }
+    };
+
+    // Sets tab focus on the element
+    function setTabFocus(focusElement: Element | null) {
+      if (focusElement) {
+        if ((focusElement as HTMLElement).focus) {
+          (focusElement as HTMLElement).focus();
+        }
+      }
+    }
 
     commands.addCommand(CommandIDs.close, {
       label: () => trans.__('Close Tab'),
@@ -328,6 +364,38 @@ const mainCommands: JupyterFrontEndPlugin<void> = {
         isEnabled: () => !labShell.isEmpty('right')
       });
 
+      commands.addCommand(CommandIDs.activateSidebarWidget, {
+        label: trans.__('Toggle Sidebar Element'),
+        caption: trans.__('By default opens first element of the sidebar'),
+        execute: args => {
+          const index = parseInt(args.index as string, 10);
+          if (args.side != 'left' && args.side != 'right') {
+            throw Error(`Unsupported sidebar: ${args.side}`);
+          }
+          const widgets = Array.from(labShell.widgets(args.side));
+          if (index >= widgets.length) {
+            return;
+          }
+          const widgetId = widgets[index].id;
+          const focusElement = document.querySelector(
+            "[data-id='" + widgetId + "']"
+          );
+          if (activeSidePanelWidget(args.side) === widgetId) {
+            if (args.side == 'left') {
+              labShell.collapseLeft();
+              setTabFocus(focusElement);
+            }
+            if (args.side == 'right') {
+              labShell.collapseRight();
+              setTabFocus(focusElement);
+            }
+          } else {
+            labShell.activateById(widgetId);
+            setTabFocus(focusElement);
+          }
+        }
+      });
+
       commands.addCommand(CommandIDs.toggleSideTabBar, {
         label: args =>
           args.side === 'right'
@@ -443,6 +511,7 @@ const mainCommands: JupyterFrontEndPlugin<void> = {
         CommandIDs.closeAll,
         CommandIDs.closeOtherTabs,
         CommandIDs.closeRightTabs,
+        CommandIDs.activateSidebarWidget,
         CommandIDs.toggleHeader,
         CommandIDs.toggleLeftArea,
         CommandIDs.toggleRightArea,
