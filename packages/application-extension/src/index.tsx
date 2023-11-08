@@ -114,8 +114,8 @@ namespace CommandIDs {
 
   export const switchSidebar = 'sidebar:switch';
 
-  export const sidebarsShortcutNumbers: string =
-    'application:display-sidebars-shortcut-numbers';
+  export const activateSidebarOverlays: string =
+    'application:activate-sidebar-overlays';
 }
 
 /**
@@ -367,8 +367,8 @@ const mainCommands: JupyterFrontEndPlugin<void> = {
         isEnabled: () => !labShell.isEmpty('right')
       });
 
-      commands.addCommand(CommandIDs.sidebarsShortcutNumbers, {
-        label: trans.__('Show Numbers Side bar'),
+      commands.addCommand(CommandIDs.activateSidebarOverlays, {
+        label: trans.__('Show Side bar overlays'),
         execute: args => {
           if (args.side != 'left' && args.side != 'right') {
             throw Error(`Unsupported sidebar: ${args.side}`);
@@ -551,7 +551,7 @@ const mainCommands: JupyterFrontEndPlugin<void> = {
         CommandIDs.togglePresentationMode,
         CommandIDs.toggleMode,
         CommandIDs.resetLayout,
-        CommandIDs.sidebarsShortcutNumbers
+        CommandIDs.activateSidebarOverlays
       ].forEach(command => palette.addItem({ command, category }));
 
       ['right', 'left'].forEach(side => {
