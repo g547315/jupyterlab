@@ -115,7 +115,7 @@ namespace CommandIDs {
   export const switchSidebar = 'sidebar:switch';
 
   export const activateSidebarOverlays: string =
-    'application:activate-sidebar-overlays';
+    'application:display-sidebars-shortcut-numbers';
 }
 
 /**
@@ -370,6 +370,7 @@ const mainCommands: JupyterFrontEndPlugin<void> = {
       commands.addCommand(CommandIDs.activateSidebarOverlays, {
         label: trans.__('Show Side bar overlays'),
         execute: args => {
+          console.log('correct');
           if (args.side != 'left' && args.side != 'right') {
             throw Error(`Unsupported sidebar: ${args.side}`);
           }
