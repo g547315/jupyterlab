@@ -46,6 +46,7 @@ import {
   buildIcon,
   ContextMenuSvg,
   jupyterIcon,
+  Overlay,
   RankedMenu,
   Switch
 } from '@jupyterlab/ui-components';
@@ -381,18 +382,39 @@ const mainCommands: JupyterFrontEndPlugin<void> = {
             let focusElement = document.querySelector(
               "[data-id='" + elementId + "']"
             );
-            if (focusElement) {
-              let getOverlayDiv = focusElement.children.item(2);
-              if (getOverlayDiv) {
-                let shortCutNum = (1 + index).toString();
-                getOverlayDiv.innerHTML = shortCutNum;
-              }
-              if ((getOverlayDiv as HTMLElement).style) {
-                (getOverlayDiv as HTMLElement).style.visibility = 'visible';
-                setTimeout(() => {
-                  (getOverlayDiv as HTMLElement).style.visibility = 'hidden';
-                }, 1000);
-              }
+            console.log(focusElement);
+            console.log(focusElement?.classList);
+            if (focusElement && !focusElement.classList.contains('overlay')) {
+              const options: Overlay.IOptions = {
+                hostElement: focusElement,
+                config: {
+                  position: 'absolute',
+                  top: '67%',
+                  left: '45%',
+                  width: '47%',
+                  height: '32%',
+                  borderRadius: '25%',
+                  'z-index': 'inherit',
+                  'text-align': 'center',
+                  color: 'rgb(255, 255, 255)',
+                  background: 'rgb(51, 51, 51)',
+                  visibility: 'hidden'
+                }
+              };
+
+              Overlay.createOverlay(options);
+            }
+
+            let getOverlayDiv = focusElement?.children.item(2);
+            if (getOverlayDiv) {
+              let shortCutNum = (1 + index).toString();
+              getOverlayDiv.innerHTML = shortCutNum;
+            }
+            if ((getOverlayDiv as HTMLElement).style) {
+              (getOverlayDiv as HTMLElement).style.visibility = 'visible';
+              setTimeout(() => {
+                (getOverlayDiv as HTMLElement).style.visibility = 'hidden';
+              }, 1000);
             }
           }
         }

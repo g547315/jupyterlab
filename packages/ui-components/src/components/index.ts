@@ -9,6 +9,7 @@ export * from './iframe';
 export * from './inputgroup';
 export * from './interface';
 export * from './menu';
+export * from './overlay';
 export * from './panelwithtoolbar';
 export * from './search';
 export * from './sidepanel';
