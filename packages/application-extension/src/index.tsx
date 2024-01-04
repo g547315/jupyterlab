@@ -382,18 +382,21 @@ const mainCommands: JupyterFrontEndPlugin<void> = {
             let focusElement = document.querySelector(
               "[data-id='" + elementId + "']"
             );
-            console.log(focusElement);
-            console.log(focusElement?.classList);
+
             if (focusElement && !focusElement.classList.contains('overlay')) {
               const options: Overlay.IOptions = {
                 hostElement: focusElement,
-                config: {
+                classConfig: {
+                  class: 'JP-Overlay',
+                  title: 'JP-Overlay-Tooltip'
+                },
+                cssConfig: {
                   position: 'absolute',
                   top: '67%',
                   left: '45%',
                   width: '47%',
                   height: '32%',
-                  borderRadius: '25%',
+                  'border-Radius': '25%',
                   'z-index': 'inherit',
                   'text-align': 'center',
                   color: 'rgb(255, 255, 255)',
