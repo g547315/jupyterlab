@@ -21,9 +21,9 @@ export namespace Overlay {
       class: string;
 
       /**
-       * An optional title to be set on the overlay element.
+       * The title to be set on the overlay element.
        */
-      title?: string;
+      title: string;
     };
 
     /**
@@ -101,7 +101,7 @@ export namespace Overlay {
     const { hostElement, classConfig, cssConfig } = options;
 
     // Check if the overlay already exists to avoid duplicates.
-    if (!hostElement.contains(hostElement)) {
+    if (!hostElement.querySelector(`[title="${classConfig.title}"]`)) {
       // Create the overlay element.
       const overlayElement = document.createElement('div');
 
