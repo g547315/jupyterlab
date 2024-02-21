@@ -22,7 +22,6 @@ test.beforeEach(async ({ page, tmpPath }) => {
 
   await page.notebook.openByPath(`${tmpPath}/${fileName}`);
   await page.notebook.activate(fileName);
-  await page.notebook.run();
 });
 
 test.afterEach(async ({ page, tmpPath }) => {
@@ -275,6 +274,7 @@ test.describe('Notebook Search', () => {
   });
 
   test('Search in multiple selected cells', async ({ page }) => {
+    await page.notebook.run();
     await page.keyboard.press('Control+f');
     await page.fill('[placeholder="Find"]', 'with');
     await page.click('button[title="Show Search Filters"]');
