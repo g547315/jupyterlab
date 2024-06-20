@@ -274,6 +274,7 @@ test.describe('Notebook Search', () => {
   });
 
   test('Search in multiple selected cells', async ({ page }) => {
+    await page.notebook.run();
     await page.keyboard.press('Control+f');
     await page.fill('[placeholder="Find"]', 'with');
     await page.click('button[title="Show Search Filters"]');
